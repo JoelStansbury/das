@@ -1,0 +1,9 @@
+name: das
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - nodejs
+  - flask
+  - flask-cors
