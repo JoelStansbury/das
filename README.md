@@ -1,4 +1,5 @@
 # das (Deem, Aryee, Stansbury)
+> das ist gut
 Cross platform desktop application for encrypting and digitally signing files
 
 ## Setup
