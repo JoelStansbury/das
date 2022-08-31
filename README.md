@@ -20,3 +20,11 @@ We're using conda to manage all our development enviroment.
          1. It helps to do this in a text editor
 7. Once we make the package you will finalize the setup with `pip install -e .` (but not yet)
 
+
+## Running the App
+Having activated your environment as in step 6 of the setup, you can launch the server with
+
+`python src/app.py`
+
+and navigate to http://localhost:5000 to see the website
+

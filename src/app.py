@@ -23,3 +23,7 @@ def main():
 @app.post("/api/encrypt/<path>")
 def encrypt(path):
     return f"I don't know how to do this yet: {path}"
+
+
+if __name__ == "__main__":
+    app.run()
