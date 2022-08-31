@@ -4,6 +4,3 @@ channels:
   - defaults
 dependencies:
   - python
-  - nodejs
-  - flask
-  - flask-cors
