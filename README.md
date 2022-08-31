@@ -4,7 +4,9 @@ _das ist gut_
 Cross platform desktop application for encrypting and digitally signing files
 
 ## Setup
-`pip install -e .`
+- Clone the repo
+- `cd` into the folder
+- `pip install -e .`
 
 ## Running the App
 `python -m das.app`
