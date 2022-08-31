@@ -1,5 +1,5 @@
 # das (Deem, Aryee, Stansbury)
-> das ist gut
+_das ist gut_
 
 Cross platform desktop application for encrypting and digitally signing files
 
