@@ -1,4 +1,4 @@
-alert( 'Hello, from javascript!' );
+
 function call_encrypt()
 {
     var path = "some path"
