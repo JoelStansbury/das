@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 
 import win32com.client as win32
+import pythoncom
 
 # 'Tuesday Sep/13 23:22'
 # DATETIME_FORMAT = "%A %b/%d %H:%M"
@@ -32,7 +33,7 @@ def email_hash(email: win32.CDispatch):
 
 class Outlook:
     def __init__(self):
-        self.app = win32.Dispatch("Outlook.Application")
+        self.app = win32.Dispatch("Outlook.Application", pythoncom.CoInitialize())
         self.select_account(0)
 
     def load(self, folder_name):
@@ -124,6 +125,7 @@ class Outlook:
         result = []
         for i, account in enumerate(self.app.Session.Folders):
             result.append((account.Name, i))
+        print(result)
         return result
 
     def select_account(self, i):

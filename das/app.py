@@ -10,7 +10,6 @@ HERE = Path(__file__).parent
 ROOT = HERE.parent
 STATIC = HERE / "static"
 
-MAIL = Outlook()
 
 app = Flask(
     __name__,
@@ -45,11 +44,13 @@ def get_accounts() -> List[dict]:
     ]
     The integer is what is provided to other api calls, e.g. "/api/getfolder/0/Inbox"
     """
+    MAIL = Outlook()  # need to initialize this on every request due to some threading issues
     return MAIL.accounts
 
 @app.get("/api/getfolder/<account>/<folder>")
 def getfolder(account:int, folder:str) -> List[dict]:
     """returns a list of dictionaries representing the contents of an outlook folder"""
+    MAIL = Outlook()
     MAIL.select_account(account)
     MAIL.load(folder)
     return MAIL.get_emails(folder)
@@ -57,6 +58,7 @@ def getfolder(account:int, folder:str) -> List[dict]:
 @app.post("/api/send")
 def send():
     """returns a list of dictionaries representing the contents of an outlook folder"""
+    MAIL = Outlook()
     data = request.data
     MAIL.select_account(data["account"])
     MAIL.send(data["to"], data["subject"], data["body"])
