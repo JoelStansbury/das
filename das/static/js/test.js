@@ -9,3 +9,13 @@ function call_encrypt()
     el = document.getElementById("result section");
     el.innerHTML = resp
 }
+
+function call_get_accounts()
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", `/api/getaccounts`, false ); // false for synchronous request
+    xmlHttp.send( null );
+    resp = xmlHttp.responseText;
+    el = document.getElementById("result section");
+    el.innerHTML = resp
+}
