@@ -22,14 +22,14 @@ class RSA:
 
 
     def encrypt(self, message):
-        ciphertext = message
-        for i in range(self.k - 1):
+        ciphertext = 1
+        for i in range(self.k):
             ciphertext = ciphertext * message % self.n
         return ciphertext
 
     def decrypt(self, ciphertext):
-        message = ciphertext
-        for i in range(self.d - 1):
+        message = 1
+        for i in range(self.d):
             message = message * ciphertext % self.n
         return message
 
