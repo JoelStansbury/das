@@ -3,9 +3,9 @@ from ..algorithms.RSA import RSA
 def test_rsa():
     r = RSA(79, 89)
 
-    print(f"k = {r.k} (should be 5)")
-    print(f"d = {r.d} (should be 1373)")
-    print(f"d = {r.n} (should be 7031)")
+    assert r.k==5, f"k={r.k} (should be 5)"
+    assert r.d==1373, f"d = {r.d} (should be 1373)"
+    assert r.n==7031, f"d = {r.n} (should be 7031)"
 
     assert (
         r.encrypt(44) == 4119
