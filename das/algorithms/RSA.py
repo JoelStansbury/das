@@ -1,8 +1,6 @@
 import random
 
 from util import Algorithms, mod
-from decimal import Decimal
-from math import pow
 
 LARGE_PRIMES = list(Algorithms.prime_sieve(1000))
 
