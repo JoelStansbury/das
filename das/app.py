@@ -51,14 +51,14 @@ def get_accounts() -> List[dict]:
     return MAIL.accounts
 
 @app.get("/api/getfolder/<account>/<folder>")
-def getfolder(account:int=0, folder:str="Inbox") -> List[dict]:
+def getfolder(account:int, folder:str) -> List[dict]:
     """returns a list of dictionaries representing the contents of an outlook folder"""
+    page = int(request.args.get("page", 0))
     MAIL = Outlook()
     MAIL.select_account(int(account))
     MAIL.load(folder)
     res = MAIL.get_emails(folder)
-    # print(res)
-    return res[:20]
+    return res[page*20:(page+1)*20]
 
 @app.post("/api/send")
 def send():

@@ -13,9 +13,14 @@ function call_encrypt()
 
 
 
-function get_inbox(username){
+function get_inbox(account_idx, folder_name, page_num){
+    // TEMPORARY VALUES
+    account_idx = 1 // may need to swap this with 0
+    folder_name = "Inbox"
+    page_num = 5
+
     let xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", `api/getfolder/1/Inbox`, false ); 
+    xmlHttp.open( "GET", `api/getfolder/${account_idx}/${folder_name}?page=${page_num}`, false ); 
     xmlHttp.send( null );
     let response = JSON.parse(xmlHttp.responseText);
     let inboxDiv = document.getElementById("inbox");
