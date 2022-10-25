@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_cors import CORS
 
 from .outlook import Outlook
@@ -27,7 +27,10 @@ def main():
     """Render and return main.html"""
     return render_template("main.html", python_variable="Success")
 
-############### ENCRYPTION ###############
+@app.get("/api/<username>/inbox")
+def get_inbox(username):
+    return send_from_directory(STATIC, "mock/example_inbox.json")
+
 @app.post("/api/encrypt/<path>")
 def encrypt(path):
     return f"I don't know how to do this yet: {path}"
@@ -50,10 +53,12 @@ def get_accounts() -> List[dict]:
 @app.get("/api/getfolder/<account>/<folder>")
 def getfolder(account:int, folder:str) -> List[dict]:
     """returns a list of dictionaries representing the contents of an outlook folder"""
+    page = int(request.args.get("page", 0))
     MAIL = Outlook()
-    MAIL.select_account(account)
+    MAIL.select_account(int(account))
     MAIL.load(folder)
-    return MAIL.get_emails(folder)
+    res = MAIL.get_emails(folder)
+    return res[page*20:(page+1)*20]
 
 @app.post("/api/send")
 def send():
@@ -67,4 +72,4 @@ def send():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run( )
