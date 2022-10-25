@@ -7,6 +7,6 @@
     background: linear-gradient(rgb(35, 162, 187), rgb(48, 215, 201));
 }
 .contain1 {
-    
     margin-top: 5px;
+    word-break: break-all;
 }
