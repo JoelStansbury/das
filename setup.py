@@ -10,6 +10,10 @@ requirements = [
     "nodejs",
     "flask",
     "flask-cors",
+    "pypiwin32",
+    "pywin32",
+    "pytest",
+    "pytest-cov"
 ]
 
 setup(

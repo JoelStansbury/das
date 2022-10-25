@@ -15,13 +15,13 @@ function call_encrypt()
 
 function get_inbox(username){
     let xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", `api/${username}/inbox`, false ); 
+    xmlHttp.open( "GET", `api/getfolder/1/Inbox`, false ); 
     xmlHttp.send( null );
     let response = JSON.parse(xmlHttp.responseText);
     let inboxDiv = document.getElementById("inbox");
     inboxList=response
     selected=response[0];
-    for(let i = 0; i <= 3; i++) {
+    for(let i = 0; i <= response.length-1; i++) {
 
         inboxDiv.innerHTML= inboxDiv.innerHTML + `<div id = ${i} class="card  msg_cards">
         <div  class="card-body ">
