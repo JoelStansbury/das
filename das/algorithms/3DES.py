@@ -185,3 +185,61 @@ def permute(text, perm, binary_length):
     for i in range(binary_length):
         res = res + text[perm[i] - 1]
     return res
+
+
+def left_circular_shift(bit_string, num_of_shifts):
+    s = ""
+    for i in range(num_of_shifts):
+        for j in range(1, len(bit_string)):
+            s = s + bit_string[j]
+        s = s + bit_string[0]
+        bit_string = s
+        s = ""
+    return bit_string
+
+
+def right_circular_shift(bit_string, num_of_shifts):
+    s = ""
+    for i in range(num_of_shifts):
+        for j in range(0, len(bit_string) - 1):
+            s = bit_string[j] + s
+        s = bit_string[len(bit_string) - 1] + s
+        bit_string = s
+        s = ""
+    return bit_string
+
+
+def xor(a, b):
+    result = ""
+    for i in range(len(a)):
+        if a[i] == b[i]:
+            result = result + "0"
+        else:
+            result = result + "1"
+    return result
+
+
+def get_round_key_encrypt(left_key, right_key, round):
+    left = left_circular_shift(left_key, shift_table[round])
+    right = left_circular_shift(right_key, shift_table[round])
+
+    combined = left + right
+
+    round_key = permute(combined, key_comp, 48)
+
+    round_key_hex = bin2hex(round_key)
+
+    return round_key, round_key_hex
+
+
+def get_round_key_decrypt(left_key, right_key, round):
+    left = right_circular_shift(left_key, shift_table[round])
+    right = right_circular_shift(right_key, shift_table[round])
+
+    combined = left + right
+
+    round_key = permute(combined, key_comp, 48)
+
+    round_key_hex = bin2hex(round_key)
+
+    return round_key, round_key_hex
