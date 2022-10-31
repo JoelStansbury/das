@@ -294,15 +294,15 @@ def encrypt(pt, key):
     return ct
 
 
-def decrypt(pt, key):
+def decrypt(ct, key):
     key = hex2bin(key)
-    pt = hex2bin(pt)
+    ct = hex2bin(ct)
 
     key = permute(key, keyp, 56)
-    pt = permute(pt, initial_perm, 64)
+    ct = permute(ct, initial_perm, 64)
 
-    left_pt = pt[0:32]
-    right_pt = pt[32:64]
+    left_pt = ct[0:32]
+    right_pt = ct[32:64]
 
     left_key = key[0:28]
     right_key = key[28:56]
@@ -335,3 +335,21 @@ def decrypt(pt, key):
 
     ct = permute(combined_pt, final_perm, 64)
     return ct
+
+
+def triple_des_encrypt(pt, key1, key2, key3):
+    if not key1 == key2 and not key3 == key2:
+        raise Exception("key2 must equal key1 or key3")
+    ct = encrypt(pt, key1)
+    ct = decrypt(ct, key2)
+    ct = encrypt(ct, key3)
+    return ct
+
+
+def triple_des_decrypt(ct, key1, key2, key3):
+    if not key1 == key2 and not key3 == key2:
+        raise Exception("key2 must equal key1 or key3")
+    pt = decrypt(ct, key1)
+    pt = encrypt(pt, key2)
+    pt = decrypt(pt, key3)
+    return pt
