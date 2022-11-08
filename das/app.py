@@ -73,3 +73,10 @@ def send():
 
 if __name__ == "__main__":
     app.run( )
+
+
+
+# subject = "this is a test"
+# body = "this is the body"
+# msg = client.make(new=k.outgoing_message,with_properties={k.subject: subject, k.content: body})
+# msg.make(new=k.to_recipient, with_properties={k.email_address: {k.address: "varyee@students.kennesaw.edu"}})
