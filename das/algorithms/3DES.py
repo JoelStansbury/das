@@ -170,12 +170,12 @@ def bin2hex(s):
                   "1111": 'F'}
 
     res = ""
-    for i in range(0, len(s), 4):
+    for i in range(0, len(s[0]), 4):
         temp = ""
-        temp = temp + s[i]
-        temp = temp + s[i + 1]
-        temp = temp + s[i + 2]
-        temp = temp + s[i + 3]
+        temp = temp + s[0][i]
+        temp = temp + s[0][i + 1]
+        temp = temp + s[0][i + 2]
+        temp = temp + s[0][i + 3]
         res = res + map_of_b2h[temp]
     return res
 
@@ -199,13 +199,9 @@ def left_circular_shift(bit_string, num_of_shifts):
 
 
 def right_circular_shift(bit_string, num_of_shifts):
-    s = ""
     for i in range(num_of_shifts):
-        for j in range(0, len(bit_string) - 1):
-            s = bit_string[j] + s
-        s = bit_string[len(bit_string) - 1] + s
-        bit_string = s
-        s = ""
+        bit_string = bit_string[-1] + bit_string[:-1]
+
     return bit_string
 
 
@@ -220,35 +216,37 @@ def xor(a, b):
 
 
 def get_round_key_encrypt(left_key, right_key):
+    round_key = []
+    round_key_hex = []
     for round_count in range(16):
         left = left_circular_shift(left_key, shift_table[round_count])
         right = left_circular_shift(right_key, shift_table[round_count])
 
         combined = left + right
-        round_key = []
-        round_key_hex = []
+
 
         round_key.append(permute(combined, key_comp, 48))
 
         round_key_hex.append(bin2hex(round_key))
 
-        return round_key, round_key_hex
+    return round_key_hex, round_key
 
 
 def get_round_keys_decrypt(left_key, right_key):
+    round_key = []
+    round_key_hex = []
     for round_count in range(16):
         left = right_circular_shift(left_key, shift_table[round_count])
         right = right_circular_shift(right_key, shift_table[round_count])
 
         combined = left + right
-        round_key = []
-        round_key_hex = []
+
 
         round_key.append(permute(combined, key_comp, 48))
 
         round_key_hex.append(bin2hex(round_key))
 
-    return round_key, round_key_hex
+    return round_key_hex, round_key
 
 
 def encrypt(pt, key):
@@ -353,3 +351,18 @@ def triple_des_decrypt(ct, key1, key2, key3):
     pt = encrypt(pt, key2)
     pt = decrypt(pt, key3)
     return pt
+
+
+def main():
+    pt = "B1C2FF00991078AE"
+    key1 = "0000000000000000"
+    key2 = "0000000000000000"
+    key3 = "1000000000000000"
+    ct = triple_des_encrypt(pt, key1, key2, key3)
+    print(ct)
+    pt2 = triple_des_decrypt(ct, key1, key2, key1)
+    print(bin2hex([pt2]))
+
+
+if __name__ == '__main__':
+    main()
