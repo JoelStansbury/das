@@ -257,6 +257,7 @@ def F(right, k):
     tmp = Permutation(tmp)
     return tmp
 
+
 def encrypt(pt, key):
     assert len(pt) == 64
 
@@ -266,10 +267,7 @@ def encrypt(pt, key):
     for k in get_round_key_encrypt(key):
         left_pt, right_pt = right_pt, xor(left_pt, F(right_pt, k))
 
-    left_pt, right_pt = right_pt, left_pt
-
-    combined_pt = left_pt + right_pt
-    return combined_pt
+    return right_pt + left_pt
 
 
 def decrypt(ct, key):
@@ -279,10 +277,7 @@ def decrypt(ct, key):
     for k in get_round_keys_decrypt(key):
         left_pt, right_pt = right_pt, xor(left_pt, F(right_pt, k))
 
-    left_pt, right_pt = right_pt, left_pt
-
-    combined_pt = left_pt + right_pt
-    return combined_pt
+    return right_pt + left_pt
 
 
 def triple_des_encrypt(pt, key1, key2, key3):
