@@ -105,6 +105,7 @@ key_comp = [14, 17, 11, 24, 1, 5,
 
 
 def dec2bin(num):
+
     res = bin(num).replace("0b", "")
 
     if len(res) % 4 != 0:
@@ -117,13 +118,7 @@ def dec2bin(num):
 
 
 def bin2dec(binary):
-    decimal, i, n = 0, 0, 0
-    while binary != 0:
-        dec = binary % 10
-        decimal = decimal + dec * (2 ** i)
-        binary = binary // 10
-        i += 1
-    return decimal
+    return int(binary, 2)
 
 
 def hex2bin(s):
@@ -152,7 +147,7 @@ def hex2bin(s):
 
 
 def bin2hex(s):
-    map_of_b2h = {"0000": '0',
+    h = {"0000": '0',
                   "0001": '1',
                   "0010": '2',
                   "0011": '3',
@@ -169,25 +164,11 @@ def bin2hex(s):
                   "1110": 'E',
                   "1111": 'F'}
 
-    res = ""
-    for i in range(0, len(s[0]), 4):
-        temp = ""
-        temp = temp + s[0][i]
-        temp = temp + s[0][i + 1]
-        temp = temp + s[0][i + 2]
-        temp = temp + s[0][i + 3]
-        res = res + map_of_b2h[temp]
+    res = "".join(h[s[i:i+4]] for i in range(0, len(s), 4))
     return res
 
 
-def permute(text, perm, binary_length):
-    res = ""
-    for i in range(binary_length):
-        res = res + text[perm[i] - 1]
-    return res
-
-
-def left_circular_shift(bit_string, num_of_shifts):
+def LS(bit_string, num_of_shifts):
     s = ""
     for i in range(num_of_shifts):
         for j in range(1, len(bit_string)):
@@ -198,7 +179,7 @@ def left_circular_shift(bit_string, num_of_shifts):
     return bit_string
 
 
-def right_circular_shift(bit_string, num_of_shifts):
+def RS(bit_string, num_of_shifts):
     for i in range(num_of_shifts):
         bit_string = bit_string[-1] + bit_string[:-1]
 
@@ -215,124 +196,93 @@ def xor(a, b):
     return result
 
 
-def get_round_key_encrypt(left_key, right_key):
-    round_key = []
-    round_key_hex = []
+def get_round_key_encrypt(key):
+    round_keys = []
+
+    # PC-1
+    key = "".join(key[i-1] for i in keyp)
+
+    # C0
+    left_key = key[:28]
+    # D0
+    right_key = key[28:]
     for round_count in range(16):
-        left = left_circular_shift(left_key, shift_table[round_count])
-        right = left_circular_shift(right_key, shift_table[round_count])
+        left_key = LS(left_key, shift_table[round_count])
+        right_key = LS(right_key, shift_table[round_count])
 
-        combined = left + right
+        k = left_key + right_key
+        round_keys.append("".join(k[i-1] for i in key_comp))
 
-
-        round_key.append(permute(combined, key_comp, 48))
-
-        round_key_hex.append(bin2hex(round_key))
-
-    return round_key_hex, round_key
+    return round_keys
 
 
-def get_round_keys_decrypt(left_key, right_key):
-    round_key = []
-    round_key_hex = []
-    for round_count in range(16):
-        left = right_circular_shift(left_key, shift_table[round_count])
-        right = right_circular_shift(right_key, shift_table[round_count])
+def get_round_keys_decrypt(key):
+    round_keys = []
 
-        combined = left + right
+    # PC-1
+    key = "".join(key[i-1] for i in keyp)
+
+    # C0
+    left_key = key[:28]
+    # D0
+    right_key = key[28:]
+    for round_count in range(15,-1,-1):
+        k = left_key + right_key
+        round_keys.append("".join(k[i-1] for i in key_comp))
+
+        left_key = RS(left_key, shift_table[round_count])
+        right_key = RS(right_key, shift_table[round_count])
+    return round_keys
 
 
-        round_key.append(permute(combined, key_comp, 48))
+def Expansion(binary):
+    return "".join([binary[i-1] for i in exp_d])
 
-        round_key_hex.append(bin2hex(round_key))
 
-    return round_key_hex, round_key
+def Permutation(binary):
+    return "".join([binary[i-1] for i in per])
 
+
+def S(binary):
+    inputs = [binary[i:i+6] for i in range(0,48,6)]
+    coords = [(bin2dec(x[0]+x[-1]), bin2dec(x[1:-1])) for x in inputs]
+    outputs = [dec2bin(sbox[i][x[0]][x[1]]) for i, x in enumerate(coords)]
+    return "".join(outputs)
+
+
+def F(right, k):
+    tmp = Expansion(right)
+    tmp = xor(tmp, k)
+    tmp = S(tmp)
+    tmp = Permutation(tmp)
+    return tmp
 
 def encrypt(pt, key):
-    key = hex2bin(key)
-    pt = hex2bin(pt)
-
-    key = permute(key, keyp, 56)
-    pt = permute(pt, initial_perm, 64)
+    assert len(pt) == 64
 
     left_pt = pt[0:32]
-    right_pt = pt[32:64]
+    right_pt = pt[32:]
 
-    left_key = key[0:28]
-    right_key = key[28:56]
+    for k in get_round_key_encrypt(key):
+        left_pt, right_pt = right_pt, xor(left_pt, F(right_pt, k))
 
-    all_round_keys, all_round_keys_bin = get_round_key_encrypt(left_key, right_key)
-
-    for rounds in range(16):
-        right_expanded = permute(right_pt, exp_d, 48)
-
-        xor_x = xor(right_expanded, all_round_keys_bin[rounds])
-
-        sbox_text = ""
-
-        for i in range(0, 8):
-            row = bin2dec(int(xor_x[i * 6] + xor_x[i * 6 + 5]))
-            col = bin2dec(
-                int(xor_x[i * 6 + 1] + xor_x[i * 6 + 2] + xor_x[i * 6 + 3] + xor_x[i * 6 + 4]))
-            val = sbox[i][row][col]
-
-            sbox_text = sbox_text + dec2bin(val)
-        sbox_text = permute(sbox_text, per, 32)
-
-        result = xor(left_pt, sbox_text)
-        left_pt = result
-
-        if rounds != 15:
-            left_pt, right_pt = right_pt, left_pt
+    left_pt, right_pt = right_pt, left_pt
 
     combined_pt = left_pt + right_pt
-
-    ct = permute(combined_pt, final_perm, 64)
-    return ct
+    return combined_pt
 
 
 def decrypt(ct, key):
-    key = hex2bin(key)
-    ct = hex2bin(ct)
-
-    key = permute(key, keyp, 56)
-    ct = permute(ct, initial_perm, 64)
-
     left_pt = ct[0:32]
-    right_pt = ct[32:64]
+    right_pt = ct[32:]
 
-    left_key = key[0:28]
-    right_key = key[28:56]
+    for k in get_round_keys_decrypt(key):
+        left_pt, right_pt = right_pt, xor(left_pt, F(right_pt, k))
 
-    all_round_keys, all_round_keys_bin = get_round_keys_decrypt(left_key, right_key)
-
-    for rounds in range(16):
-        right_expanded = permute(right_pt, exp_d, 48)
-
-        xor_x = xor(right_expanded, all_round_keys_bin[rounds])
-
-        sbox_text = ""
-
-        for i in range(0, 8):
-            row = bin2dec(int(xor_x[i * 6] + xor_x[i * 6 + 5]))
-            col = bin2dec(
-                int(xor_x[i * 6 + 1] + xor_x[i * 6 + 2] + xor_x[i * 6 + 3] + xor_x[i * 6 + 4]))
-            val = sbox[i][row][col]
-
-            sbox_text = sbox_text + dec2bin(val)
-        sbox_text = permute(sbox_text, per, 32)
-
-        result = xor(left_pt, sbox_text)
-        left_pt = result
-
-        if rounds != 15:
-            left_pt, right_pt = right_pt, left_pt
+    left_pt, right_pt = right_pt, left_pt
 
     combined_pt = left_pt + right_pt
-
-    ct = permute(combined_pt, final_perm, 64)
-    return ct
+    return combined_pt
 
 
 def triple_des_encrypt(pt, key1, key2, key3):
@@ -354,14 +304,25 @@ def triple_des_decrypt(ct, key1, key2, key3):
 
 
 def main():
-    pt = "B1C2FF00991078AE"
-    key1 = "0000000000000000"
-    key2 = "0000000000000000"
-    key3 = "1000000000000000"
-    ct = triple_des_encrypt(pt, key1, key2, key3)
-    print(ct)
-    pt2 = triple_des_decrypt(ct, key1, key2, key1)
-    print(bin2hex([pt2]))
+    pt = hex2bin("0000001000000400")
+    key1 = hex2bin("A00000000F000000")
+    key2 = hex2bin("A00000000F000000")
+    key3 = hex2bin("A00000000B000000")
+    print(
+        bin2hex(
+            triple_des_decrypt(
+                triple_des_encrypt(
+                    pt, 
+                    key1, 
+                    key2, 
+                    key3
+                ), 
+                key1, 
+                key2, 
+                key3
+            )
+        )
+    )
 
 
 if __name__ == '__main__':
