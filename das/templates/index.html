@@ -60,12 +60,10 @@
       <div class="col-9">
         <nav class="navbar navbar-light" style="background-color:rgb(59, 164, 164);">
           <div class="container-fluid">
-            <!-- <button onclick="composeBtnOnclick()"> -->
-              <a class="navbar-brand" href="#" data-bs-toggle="modal" data-bs-target="#composeModal">
-                <iclass="bi bi-pencil-square" id="composeBtnID"></i>
+            <a class="navbar-brand" href="#" data-bs-toggle="modal" data-bs-target="#composeModal">
+              <iclass="bi bi-pencil-square" id="composeBtnID"></i>
                 COMPOSE
-              </a>
-            <!-- </button> -->
+            </a>
             <div class="d-flex">
 
 
@@ -122,9 +120,7 @@
                     </p>
                   </div>
                   <div class="position-absolute bottom-0 end-0">
-                    <!-- <button onclick="replyBtnOnclick()">  -->
-                      <i class="bi bi-reply" data-bs-toggle="modal" data-bs-target="#composeModal" id="replyBtnID"></i> 
-                    <!-- </button> -->
+                    <i class="bi bi-reply" data-bs-toggle="modal" data-bs-target="#composeModal" id="replyBtnID"></i>
                     <i class="bi bi-trash"></i>
                     <i class="bi bi-forward"></i>
                   </div>
@@ -137,13 +133,7 @@
             </div>
           </div>
         </div>
-
-
-
-
       </div>
-
-
 
       <!-- Modal -->
       <div class="modal fade" id="composeModal" tabindex="-1" aria-labelledby="composeModalLabel" aria-hidden="true">
@@ -172,7 +162,9 @@
             </div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary position-absolute bottom-0 start-0">Send message</button>
+              <button type="button" class="btn btn-primary position-absolute bottom-0 start-0" onclick="send()">
+                Send message
+              </button>
             </div>
           </div>
         </div>
