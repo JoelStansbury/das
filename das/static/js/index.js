@@ -63,5 +63,22 @@ function call_get_accounts() {
 
 window.addEventListener('DOMContentLoaded', (event) => {
   get_inbox("veronica");
-});
 
+
+  // AUTOFILL COMPOSE MODAL
+  var replyBtn = document.getElementById("replyBtnID");
+  if (replyBtn) {
+    replyBtn.addEventListener('click', (event) => {
+      replyBtnOnclick();
+    }
+    );
+  }
+
+  var composeBtn = document.getElementById("composeBtnID");
+  if (composeBtn) {
+    composeBtn.addEventListener('click', (event) => {
+      composeBtnOnclick();
+    }
+    );
+  }
+});

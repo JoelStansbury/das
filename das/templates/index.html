@@ -60,10 +60,12 @@
       <div class="col-9">
         <nav class="navbar navbar-light" style="background-color:rgb(59, 164, 164);">
           <div class="container-fluid">
-            <button onclick="composeBtnOnclick()">
-              <a class="navbar-brand" href="#" data-bs-toggle="modal" data-bs-target="#composeModal"><i
-                  class="bi bi-pencil-square"></i>COMPOSE</a>
-            </button>
+            <!-- <button onclick="composeBtnOnclick()"> -->
+              <a class="navbar-brand" href="#" data-bs-toggle="modal" data-bs-target="#composeModal">
+                <iclass="bi bi-pencil-square" id="composeBtnID"></i>
+                COMPOSE
+              </a>
+            <!-- </button> -->
             <div class="d-flex">
 
 
@@ -120,8 +122,9 @@
                     </p>
                   </div>
                   <div class="position-absolute bottom-0 end-0">
-                    <button onclick="replyBtnOnclick()"> <i class="bi bi-reply" data-bs-toggle="modal"
-                        data-bs-target="#composeModal"></i> </button>
+                    <!-- <button onclick="replyBtnOnclick()">  -->
+                      <i class="bi bi-reply" data-bs-toggle="modal" data-bs-target="#composeModal" id="replyBtnID"></i> 
+                    <!-- </button> -->
                     <i class="bi bi-trash"></i>
                     <i class="bi bi-forward"></i>
                   </div>
