@@ -60,12 +60,17 @@ class Outlook:
             try:
                 CACHE[self.account_name][folder_name][_id] = {
                     "id": _id,
-                    "sender": {"name": email.Sender.Name, "email": email.SenderEmailAddress},
-                    "recipients": [{"name": r.Name, "email":r.Address} for r in email.Recipients],
+                    "sender": {
+                        "name": email.Sender.Name,
+                        "email": email.SenderEmailAddress,
+                    },
+                    "recipients": [
+                        {"name": r.Name, "email": r.Address} for r in email.Recipients
+                    ],
                     "cc": email.CC,
                     "subject": email.Subject,
                     "body": email.Body,
-                    "recieved": email.ReceivedTime.Format(DATETIME_FORMAT)
+                    "recieved": email.ReceivedTime.Format(DATETIME_FORMAT),
                 }
             except:  # read error (could not read email)
                 pass
@@ -92,12 +97,17 @@ class Outlook:
             try:
                 CACHE[self.account_name][folder_name][_id] = {
                     "id": _id,
-                    "sender": {"name": email.Sender.Name, "email": email.SenderEmailAddress},
-                    "recipients": [{"name": r.Name, "email":r.Address} for r in email.Recipients],
+                    "sender": {
+                        "name": email.Sender.Name,
+                        "email": email.SenderEmailAddress,
+                    },
+                    "recipients": [
+                        {"name": r.Name, "email": r.Address} for r in email.Recipients
+                    ],
                     "cc": email.CC,
                     "subject": email.Subject,
                     "body": email.Body,
-                    "recieved": email.ReceivedTime.Format(DATETIME_FORMAT)
+                    "recieved": email.ReceivedTime.Format(DATETIME_FORMAT),
                 }
             except:  # read error
                 pass
@@ -116,7 +126,7 @@ class Outlook:
         emails = sorted(
             CACHE[self.account_name][folder_name].values(),
             key=lambda x: x["recieved"],
-            reverse=True
+            reverse=True,
         )
         return emails
 
@@ -124,8 +134,8 @@ class Outlook:
     def accounts(self):
         result = []
         for i, account in enumerate(self.app.Session.Folders):
-            result.append((account.Name, i))
-        print(result)
+            if not account.Name.startswith("Public Folders - "):
+                result.append((account.Name, i))
         return result
 
     def select_account(self, i):
@@ -175,7 +185,7 @@ class Outlook:
 
     def reply_all(self, email, subject, body):
         self.send(
-            to= [email["sender"], email["cc"]],
+            to=[email["sender"], email["cc"]],
             subject=subject,
             body=body,
         )
