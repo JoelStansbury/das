@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="static/css/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -25,7 +26,7 @@
 </nav>
 <div class="container text-align-left contain1">
   <div class="row gx-5">
-    <div class="col-3">
+    <div class="col-2">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-inbox"></i>
@@ -51,7 +52,7 @@
         </div>
       </div>
     </div>
-    <div class="col-9">
+    <div class="col-10">
       <nav class="navbar navbar-light" style="background-color:rgb(59, 164, 164);"> 
         <div class="container-fluid">
 
@@ -66,22 +67,24 @@
       </nav>
       <div class="container text-align-left">
         <div class="row">
-          <div class="col-4">
+          <div class="col-3">
             <div id="inbox">
 
             </div>
           <nav aria-label="...">
               <ul class="pagination">
-                <li class="page-item disabled">
+                <li  class="page-item disabled">
                   <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active" aria-current="page">
-                  <a class="page-link" href="#">2</a>
+                <li id = 1 class="page-item">
+                  <a class="page-link" href="#">1</a>
                 </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li id = 2 class="page-item active" aria-current="page">
+                  <a  class="page-link" href="#">2</a>
+                </li>
+                <li id = 3 class="page-item"><a class="page-link" href="#">3</a></li>
                 <li class="page-item">
-                  <a class="page-link" href="#">Next</a>
+                  <a  class="page-link" href="#">Next</a>
                 </li>
               </ul>
             </nav>
@@ -89,9 +92,9 @@
 
           
         </div>
-        <div class="col-8">
+        <div class="col-9">
           <div class="card" >
-            <div class="card-body" style="height: 5rem;">
+            <div class="card-body" style="height: 5rem; ">
               <div class="position-absolute top-0 start-0">
                 <h7 id = "senderName">
                   
@@ -133,7 +136,7 @@
           </div>
           <div class="input-group">
               
-            <p id = "messageBody" class="form-control" aria-label="With textarea" style="height: 50rem;">
+            <p id = "messageBody" class="form-control" aria-label="With textarea" style="height: 50rem; width: auto;">
 
             </p>
           </div>
@@ -162,9 +165,9 @@
           <div class="card " class="mb-3">
             <div class="card-body">
               <label for="exampleInputEmail1" class="form-label">From:</label>
-    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    <input type="email" class="form-control" id="fromEmail" placeholder="name@example.com">
     <label for="exampleInputEmail1" class="form-label">Recipient:</label>
-    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    <input type="email" class="form-control" id="toEmail" placeholder="name@example.com">
               
               
 
