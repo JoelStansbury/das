@@ -26,7 +26,7 @@ function send() {
     console.log(body);
 
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "POST", `api/send`, false ); // false for synchronous request
+    xmlHttp.open( "POST", `api/send/${SELECTED_ACCOUNT}`, false ); // false for synchronous request
     xmlHttp.send( 
         JSON.stringify({
             "to":recipient,

@@ -71,20 +71,16 @@ def index():
     """Render and return index.html"""
     return render_template("index.html")
 
+def decrypt(email):
+    email["body"] = email["body"].strip(ENCRYPTED_MESSAGE_MARKER)
 
-@app.route("/main")
-def main():
-    """Render and return main.html"""
-    return render_template("main.html", python_variable="Success")
-
-
-def encrypt(path):
-    return f"I don't know how to do this yet: {path}"
+def encrypt(email):
+    email["body"] = ENCRYPTED_MESSAGE_MARKER + email["body"]
 
 
 ############### EMAIL ACTIONS ###############
 @app.get("/api/getaccounts")
-def get_accounts() -> List[dict]:
+def get_accounts() -> List[tuple]:
     """
     Returns a list accounts currently accessible through outlook.
     E.g. [
@@ -98,6 +94,19 @@ def get_accounts() -> List[dict]:
     )  # need to initialize this on every request due to some threading issues
     return MAIL.accounts
 
+@app.get("/api/getfolders/<account>")
+def get_folders(account:int) -> List[str]:
+    """
+    Returns a list folders available to the account.
+    E.g. [
+        "Inbox",
+        "Sent",
+        ...
+    ]
+    """
+    MAIL = Outlook()
+    MAIL.select_account(int(account))
+    return list(MAIL.folders.keys())
 
 @app.get("/api/getfolder/<account>/<folder>")
 def getfolder(account: int, folder: str) -> List[dict]:
@@ -105,22 +114,24 @@ def getfolder(account: int, folder: str) -> List[dict]:
     page = int(request.args.get("page", 0))
     MAIL = Outlook()
     MAIL.select_account(int(account))
-    MAIL.load(folder)
     res = [
         e
         for e in MAIL.get_emails(folder)
         if e["body"].startswith(ENCRYPTED_MESSAGE_MARKER)
     ]
+    for e in res:
+        decrypt(e)
     return res[page * 20 : (page + 1) * 20]
     # return [decrypt(e) for e in res[page * 20 : (page + 1) * 20]]
 
 
-@app.post("/api/send")
-def send():
+@app.post("/api/send/<from_account>")
+def send(from_account:int):
     """returns a list of dictionaries representing the contents of an outlook folder"""
     MAIL = Outlook()
+    MAIL.select_account(int(from_account))
     data = json.loads(request.data)
-    # encrypt(data)  # This should determine the key based off of the "to" parameter and encrypt the "body"
+    encrypt(data)  # This should determine the key based off of the "to" parameter and encrypt the "body"
     MAIL.send(data["to"], data["subject"], data["body"])
     return "200"
 
