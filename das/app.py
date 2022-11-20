@@ -6,9 +6,10 @@ from flask import Flask, render_template, request, send_from_directory
 from flask_cors import CORS
 
 from .outlook import Outlook
-
-import csv
-import os
+from .key_manager import keys
+from .algorithms.RSA import RSA
+from .algorithms.triple_DES import triple_des_decrypt, triple_des_encrypt
+from .algorithms import convert
 
 HERE = Path(__file__).parent
 ROOT = HERE.parent
@@ -16,54 +17,13 @@ STATIC = HERE / "static"
 
 ENCRYPTED_MESSAGE_MARKER = "DAS ENCRYPTED MESSAGE"
 KEY_REQUEST_MARKER = "DAS KEY REQUEST"
+KEY_RESPONSE_MARKER = "DAS KEY RESPONSE"
+DES_KEY_MARKER = "DAS DES KEY"
 
 app = Flask(
     __name__,
 )
 CORS(app)
-
-
-def save_keys(rsa_pubkey, rsa_prikey, des_key_1, des_key_2, des_key_3, sender_name):
-    keys = []
-    field_names = [
-        "User",
-        "RSA Public Key",
-        "RSA Private Key",
-        "DES Key 1",
-        "DES Key 2",
-        "DES Key 3",
-    ]
-    current_keys = csv.reader("keys.csv", "rw")
-    for rows in current_keys[1:]:
-        keys.append(
-            {
-                "User": rows[0],
-                "RSA Public Key": rows[1],
-                "RSA Private Key": rows[2],
-                "DES Key 1": rows[3],
-                "DES Key 2": rows[4],
-                "DES Key 3": rows[4],
-            }
-        )
-
-    os.remove("keys.csv")
-
-    keys.append(
-        {
-            "User": sender_name,
-            "RSA Public Key": rsa_pubkey,
-            "RSA Private Key": rsa_prikey,
-            "DES Key 1": des_key_1,
-            "DES Key 2": des_key_2,
-            "DES Key 3": des_key_3,
-        }
-    )
-
-    with open("keys.csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=field_names)
-        writer.writeheader()
-        writer.writerows(keys)
-
 
 ############### PAGES ###############
 @app.route("/")
@@ -71,11 +31,27 @@ def index():
     """Render and return index.html"""
     return render_template("index.html")
 
+
 def decrypt(email):
     email["body"] = email["body"].strip(ENCRYPTED_MESSAGE_MARKER)
+    return  # TODO: delete this once key loading is complete
+    k1, k2, k3 = keys.get_3des_key(email["sender"])
+    ct = email["body"].strip(ENCRYPTED_MESSAGE_MARKER)
+    ct_bin = convert.encode(ct)
+    pt_bin = triple_des_decrypt(ct_bin, k1, k2, k3)
+    pt = convert.decode(pt_bin)
+    email["body"] = pt
+
 
 def encrypt(email):
     email["body"] = ENCRYPTED_MESSAGE_MARKER + email["body"]
+    return  # TODO: delete this once key loading is complete
+    k1, k2, k3 = keys.get_3des_key(email["to"])
+    pt = email["body"]
+    pt_bin = convert.encode(pt)
+    ct_bin = triple_des_encrypt(pt_bin, k1, k2, k3)
+    ct = convert.decode(ct_bin)
+    email["body"] = ENCRYPTED_MESSAGE_MARKER + ct
 
 
 ############### EMAIL ACTIONS ###############
@@ -94,8 +70,9 @@ def get_accounts() -> List[tuple]:
     )  # need to initialize this on every request due to some threading issues
     return MAIL.accounts
 
+
 @app.get("/api/getfolders/<account>")
-def get_folders(account:int) -> List[str]:
+def get_folders(account: int) -> List[str]:
     """
     Returns a list folders available to the account.
     E.g. [
@@ -108,32 +85,76 @@ def get_folders(account:int) -> List[str]:
     MAIL.select_account(int(account))
     return list(MAIL.folders.keys())
 
+
 @app.get("/api/getfolder/<account>/<folder>")
 def getfolder(account: int, folder: str) -> List[dict]:
     """returns a list of dictionaries representing the contents of an outlook folder"""
     page = int(request.args.get("page", 0))
     MAIL = Outlook()
     MAIL.select_account(int(account))
-    res = [
-        e
-        for e in MAIL.get_emails(folder)
-        if e["body"].startswith(ENCRYPTED_MESSAGE_MARKER)
-    ]
-    for e in res:
-        decrypt(e)
+    res = []
+    for e in MAIL.get_emails(folder):
+        if e["body"].startswith(ENCRYPTED_MESSAGE_MARKER):
+            decrypt(e)
+            res.append(e)
+        elif e["body"].startswith(
+            KEY_REQUEST_MARKER
+        ):  # Someone requested a secure key for future communication
+            # Generate a key
+            k = keys.generate_des_key()
+            # Save it
+            keys.save_3des_key(e["sender"], *k)
+
+            # Encrypt the key
+            user_pub = e["body"].strip(KEY_REQUEST_MARKER)
+            pt = convert.decode(k)
+            ct = convert.decode(k)  # TODO: encrypt this RSA.encrypt(pt, user_pub)
+
+            # Send the key back to the requestor so that they can say what they want
+            MAIL.send(e["sender"], e["subject"], KEY_RESPONSE_MARKER + ct)
+        elif e["body"].startswith(KEY_RESPONSE_MARKER):
+            # The sender has accepted a key request and responded with the DES key
+
+            # Use my private RSA key to decrypt the DES key
+            ct = e["body"].strip(KEY_RESPONSE_MARKER)
+            my_pvt = keys.get_private_rsa_key(MAIL.account.Name)
+            pt = ct  # TODO: decrypt this RSA.decrypt(ct, my_pvt)
+            k = convert.encode(pt)
+
+            # Save it
+            keys.save_3des_key(e["sender"], *k)
+
+            e["body"] = "SECURE LOC ESTABLISHED"
+            res.append(e)
+
     return res[page * 20 : (page + 1) * 20]
-    # return [decrypt(e) for e in res[page * 20 : (page + 1) * 20]]
 
 
 @app.post("/api/send/<from_account>")
-def send(from_account:int):
-    """returns a list of dictionaries representing the contents of an outlook folder"""
+def send_email(from_account: int):
+    email = json.loads(request.data)
+    try:
+        return send(from_account, email)
+    except:
+        return request_key(from_account, email["to"])
+
+
+def send(from_account, email):
     MAIL = Outlook()
     MAIL.select_account(int(from_account))
-    data = json.loads(request.data)
-    encrypt(data)  # This should determine the key based off of the "to" parameter and encrypt the "body"
-    MAIL.send(data["to"], data["subject"], data["body"])
+    encrypt(email)
+    MAIL.send(email["to"], email["subject"], email["body"])
     return "200"
+
+def request_key(from_account, user):
+    MAIL = Outlook()
+    MAIL.select_account(int(from_account))
+    MAIL.send(
+        user,
+        "DAS Request",
+        KEY_REQUEST_MARKER #+ keys.get_public_rsa_key(),
+    )
+    return "300"
 
 
 if __name__ == "__main__":
