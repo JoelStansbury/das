@@ -16,30 +16,28 @@ field_names = [
 
 
 def get_private_rsa_key(my_email_address):
-    keys = []
-
-    current_keys = csv.reader("keys.csv", "rw")
-
-    for rows in current_keys[1:]:
-        if rows[0] == my_email_address:
-            return rows[2]
+    with open("keys.csv", newline='') as csvfile:
+        current_keys = csv.DictReader(csvfile, fieldnames=field_names)
+        for rows in current_keys:
+            if rows['User'] == my_email_address:
+                return rows['RSA Private Key']
 
 
 def get_public_rsa_key(my_email_address):
-    current_keys = csv.reader("keys.csv", "rw")
-
-    for rows in current_keys[1:]:
-        if rows[0] == my_email_address:
-            return rows[1]
+    with open("keys.csv", newline='') as csvfile:
+        current_keys = csv.DictReader(csvfile, fieldnames=field_names)
+        for rows in current_keys:
+            if rows['User'] == my_email_address:
+                return rows['RSA Public Key']
 
 
 def get_3des_key(other_user):
     # return key1, key2, key3
-    current_keys = csv.reader("keys.csv", "rw")
-
-    for rows in current_keys[1:]:
-        if rows[0] == other_user:
-            return rows[3], rows[4], rows[5]
+    with open("keys.csv", newline='') as csvfile:
+        current_keys = csv.DictReader(csvfile, fieldnames=field_names)
+        for rows in current_keys:
+            if rows['User'] == other_user:
+                return rows['DES Key 1'], rows['DES Key 2'], rows['DES Key 3']
 
 
 def save_3des_key(other_user, key1, key2, key3):
@@ -100,6 +98,10 @@ def save_keys(rsa_pubkey, rsa_prikey, des_key_1, des_key_2, des_key_3, sender_na
 def main():
     generate_rsa_key("rtdeem@gmail.com")
     generate_des_key("rdeem@students.kennesaw.edu")
+    print(get_public_rsa_key("rtdeem@gmail.com"))
+    print(get_private_rsa_key("rtdeem@gmail.com"))
+
+    print(get_3des_key("rdeem@students.kennesaw.edu"))
 
 
 if __name__ == '__main__':
