@@ -34,25 +34,21 @@ def decrypt(email):
     # email["body"] = email["body"].strip(ENCRYPTED_MESSAGE_MARKER)
     # return  # TODO: delete this once key loading is complete
     try:
-        k1, k2, k3 = keys.get_3des_key(email["sender"])
+        k1, k2, k3 = keys.get_3des_key(email["sender"]["email"])
         ct = email["body"].strip(ENCRYPTED_MESSAGE_MARKER)
         ct_bin = convert.encode(ct)
-        pt_bin = triple_des_decrypt(ct_bin, k1, k2, k3)
+        pt_bin = [triple_des_decrypt(b, k1, k2, k3) for b in ct_bin]
         pt = convert.decode(pt_bin)
         email["body"] = pt
     except:
-        
         email["body"] += "\n\n COULD NOT FIND KEY"
 
 
 def encrypt(email):
-    print("ENCRYPT")
-    # email["body"] = ENCRYPTED_MESSAGE_MARKER + email["body"]
-    # return  # TODO: delete this once key loading is complete
     k1, k2, k3 = keys.get_3des_key(email["to"])
     pt = email["body"]
     pt_bin = convert.encode(pt)
-    ct_bin = triple_des_encrypt(pt_bin, k1, k2, k3)
+    ct_bin = [triple_des_encrypt(b, k1, k2, k3) for b in pt_bin]
     ct = convert.decode(ct_bin)
     email["body"] = ENCRYPTED_MESSAGE_MARKER + ct
 
@@ -116,7 +112,7 @@ def getfolder(account: int, folder: str) -> List[dict]:
                     for x in keys.generate_des_key(e["sender"]['email'])
                 ])
                 body = KEY_RESPONSE_MARKER + f"({encrypted_des_key})"
-                print(f"RESPONDING WITH {body}")
+
                 # Send the key back to the requestor so that they can say what they want
                 MAIL.send(e["sender"]['email'], e["subject"], body)
         elif e["body"].startswith(KEY_RESPONSE_MARKER):
@@ -126,9 +122,7 @@ def getfolder(account: int, folder: str) -> List[dict]:
                 ckeys = e["body"].strip(KEY_RESPONSE_MARKER).strip()[1:-1].split()
 
                 p, q, d = keys.get_private_rsa_key(MAIL.account.Name)
-                rsa = RSA(3,7)
-                rsa.p = int(p)
-                rsa.q = int(q)
+                rsa = RSA(int(p), int(q))
                 rsa.d = int(d)
                 print("decrypting")
                 pkeys = [

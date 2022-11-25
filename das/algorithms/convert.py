@@ -2,8 +2,9 @@
 
 def encode(string, block_size=64):
     bin = ''.join(f"{ord(x):08b}" for x in string)
-    rem = len(bin) % block_size
-    bin += '0'*rem
+    if len(bin) % block_size:
+        rem = block_size * (1 + len(bin) // block_size) - len(bin)
+        bin += '0'*rem
     return [bin[i:i+block_size] for i in range(0, len(bin), block_size)]
 
 
