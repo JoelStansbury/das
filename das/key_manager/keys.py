@@ -18,9 +18,12 @@ field_names = [
         "DES Key 3"
     ]
 
+HERE = Path(__file__).parent
+KEYS = HERE / "keys.csv"
+
 
 def get_private_rsa_key(my_email_address):
-    with open("keys.csv", newline='') as csvfile:
+    with open(KEYS, newline='') as csvfile:
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if rows['User'] == my_email_address:
@@ -28,7 +31,7 @@ def get_private_rsa_key(my_email_address):
 
 
 def get_public_rsa_key(my_email_address):
-    with open("keys.csv", newline='') as csvfile:
+    with open(KEYS, newline='') as csvfile:
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if rows['User'] == my_email_address:
@@ -37,7 +40,7 @@ def get_public_rsa_key(my_email_address):
 
 def get_3des_key(other_user):
     # return key1, key2, key3
-    with open("keys.csv", newline='') as csvfile:
+    with open(KEYS, newline='') as csvfile:
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if rows['User'] == other_user:
@@ -64,12 +67,13 @@ def generate_des_key(other_user):
             else:
                 s[i] += "0"
     save_3des_key(other_user, s[0], s[1], s[2])
+    return s
 
 
 def save_keys(rsa_n, rsa_e, rsa_p, rsa_q, rsa_d, des_key_1, des_key_2, des_key_3, sender_name):
     keys = []
     skip = True
-    with open("keys.csv", newline='') as csvfile:
+    with open(KEYS, newline='') as csvfile:
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if not skip:
@@ -77,7 +81,7 @@ def save_keys(rsa_n, rsa_e, rsa_p, rsa_q, rsa_d, des_key_1, des_key_2, des_key_3
             else:
                 skip = False
 
-    os.remove("keys.csv")
+    os.remove(KEYS)
 
     keys.append(
         {
@@ -93,7 +97,7 @@ def save_keys(rsa_n, rsa_e, rsa_p, rsa_q, rsa_d, des_key_1, des_key_2, des_key_3
         }
     )
 
-    with open("keys.csv", "w") as csvfile:
+    with open(KEYS, "w") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(keys)
@@ -104,7 +108,6 @@ def main():
     generate_des_key("rdeem@students.kennesaw.edu")
     print(get_public_rsa_key("rtdeem@gmail.com"))
     print(get_private_rsa_key("rtdeem@gmail.com"))
-
     print(get_3des_key("rdeem@students.kennesaw.edu"))
 
 
