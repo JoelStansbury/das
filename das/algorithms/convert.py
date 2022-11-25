@@ -1,4 +1,4 @@
-import triple_DES
+# import triple_DES
 
 def encode(string, block_size=64):
     bin = ''.join(f"{ord(x):08b}" for x in string)

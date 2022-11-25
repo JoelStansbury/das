@@ -8,7 +8,7 @@ from flask_cors import CORS
 from .outlook import Outlook
 from .algorithms.triple_DES import triple_des_decrypt, triple_des_encrypt
 from .algorithms import convert
-from das.key_manager import keys
+from .key_manager import keys
 
 HERE = Path(__file__).parent
 ROOT = HERE.parent
