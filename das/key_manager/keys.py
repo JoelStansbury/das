@@ -7,7 +7,11 @@ from das.algorithms import RSA
 
 field_names = [
         "User",
-        "RSA Public Key",
+        "RSA n",
+        "RSA e",
+        "RSA p",
+        "RSA q",
+        "RSA d",
         "RSA Private Key",
         "DES Key 1",
         "DES Key 2",
@@ -20,7 +24,7 @@ def get_private_rsa_key(my_email_address):
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if rows['User'] == my_email_address:
-                return rows['RSA Private Key']
+                return rows['RSA p'], rows['RSA q'], rows['RSA d']
 
 
 def get_public_rsa_key(my_email_address):
@@ -28,7 +32,7 @@ def get_public_rsa_key(my_email_address):
         current_keys = csv.DictReader(csvfile, fieldnames=field_names)
         for rows in current_keys:
             if rows['User'] == my_email_address:
-                return rows['RSA Public Key']
+                return rows['RSA n'], rows['RSA e']
 
 
 def get_3des_key(other_user):
@@ -41,16 +45,13 @@ def get_3des_key(other_user):
 
 
 def save_3des_key(other_user, key1, key2, key3):
-    save_keys("", "", key1, key2, key3, other_user)
+    save_keys("", "", "", "", "", key1, key2, key3, other_user)
 
 
 def generate_rsa_key(my_email_address):
     generator = RSA()
 
-    pub_key = "(" + str(generator.n) + " " + str(generator.k) + ")"
-    priv_key = "(" + str(generator.p) + " " + str(generator.q) + " " + str(generator.d) + ")"
-
-    save_keys(pub_key, priv_key, "", "", "", my_email_address)
+    save_keys(generator.n, generator.k, generator.p, generator.q, generator.d, "", "", "", my_email_address)
 
 
 def generate_des_key(other_user):
@@ -65,7 +66,7 @@ def generate_des_key(other_user):
     save_3des_key(other_user, s[0], s[1], s[2])
 
 
-def save_keys(rsa_pubkey, rsa_prikey, des_key_1, des_key_2, des_key_3, sender_name):
+def save_keys(rsa_n, rsa_e, rsa_p, rsa_q, rsa_d, des_key_1, des_key_2, des_key_3, sender_name):
     keys = []
     skip = True
     with open("keys.csv", newline='') as csvfile:
@@ -81,8 +82,11 @@ def save_keys(rsa_pubkey, rsa_prikey, des_key_1, des_key_2, des_key_3, sender_na
     keys.append(
         {
             "User": sender_name,
-            "RSA Public Key": rsa_pubkey,
-            "RSA Private Key": rsa_prikey,
+            "RSA n": rsa_n,
+            "RSA e": rsa_e,
+            "RSA p": rsa_p,
+            "RSA q": rsa_q,
+            "RSA d": rsa_d,
             "DES Key 1": des_key_1,
             "DES Key 2": des_key_2,
             "DES Key 3": des_key_3,
