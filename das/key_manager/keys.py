@@ -28,6 +28,9 @@ def get_private_rsa_key(my_email_address):
         for rows in current_keys:
             if rows['User'] == my_email_address:
                 return rows['RSA p'], rows['RSA q'], rows['RSA d']
+    # Create if not exist
+    generate_rsa_key(my_email_address)
+    return get_private_rsa_key(my_email_address)
 
 
 def get_public_rsa_key(my_email_address):
@@ -36,7 +39,9 @@ def get_public_rsa_key(my_email_address):
         for rows in current_keys:
             if rows['User'] == my_email_address:
                 return rows['RSA n'], rows['RSA e']
-
+    # Create if not exist
+    generate_rsa_key(my_email_address)
+    return get_public_rsa_key(my_email_address)
 
 def get_3des_key(other_user):
     # return key1, key2, key3

@@ -7,6 +7,7 @@ from flask_cors import CORS
 
 from .outlook import Outlook
 from .algorithms.triple_DES import triple_des_decrypt, triple_des_encrypt
+from .algorithms.RSA import RSA
 from .algorithms import convert
 from .key_manager import keys
 
@@ -45,6 +46,7 @@ def decrypt(email):
 
 
 def encrypt(email):
+    print("ENCRYPT")
     # email["body"] = ENCRYPTED_MESSAGE_MARKER + email["body"]
     # return  # TODO: delete this once key loading is complete
     k1, k2, k3 = keys.get_3des_key(email["to"])
@@ -100,38 +102,44 @@ def getfolder(account: int, folder: str) -> List[dict]:
         elif e["body"].startswith(
             KEY_REQUEST_MARKER
         ):  # Someone requested a secure key for future communication
-            print(f"Making a key for {e['sender']}")
-            MAIL.delete(e["id"], folder)
-            # Generate a key
-            k = keys.generate_des_key(e["sender"])
-            # Save it
-            keys.save_3des_key(e["sender"], *k)
-
-            # Encrypt the key
-            user_pub = e["body"].strip(KEY_REQUEST_MARKER)
-            pt = ",".join(k)
-            print("binary")
-            print(pt)
-            print(convert.encode(pt))
-            ct = pt  # TODO: encrypt this RSA.encrypt(pt, user_pub)
-            print(f"RESPONDING WITH {type(ct)}({ct})")
-            # Send the key back to the requestor so that they can say what they want
-            MAIL.send(e["sender"], e["subject"], KEY_RESPONSE_MARKER + ct)
+            _key = keys.get_3des_key(e["sender"]["email"])
+            if _key is None or not all(_key):
+                print(f"Making a key for {e['sender']['email']}")
+                # Extract the public key
+                n, k = [int(x) for x in e["body"].strip(KEY_REQUEST_MARKER).strip()[1:-1].split()]
+                rsa = RSA(3,7)
+                rsa.n = n
+                rsa.k = k
+                # Generate a key
+                encrypted_des_key = " ".join([
+                    str(rsa.encrypt(int(x,2)))
+                    for x in keys.generate_des_key(e["sender"]['email'])
+                ])
+                body = KEY_RESPONSE_MARKER + f"({encrypted_des_key})"
+                print(f"RESPONDING WITH {body}")
+                # Send the key back to the requestor so that they can say what they want
+                MAIL.send(e["sender"]['email'], e["subject"], body)
         elif e["body"].startswith(KEY_RESPONSE_MARKER):
-            MAIL.delete(e["id"], folder)
-            # The sender has accepted a key request and responded with the DES key
+            _key = keys.get_3des_key(e["sender"]["email"])
+            if _key is None or not all(_key):
+                # Use my private RSA key to decrypt the DES key
+                ckeys = e["body"].strip(KEY_RESPONSE_MARKER).strip()[1:-1].split()
 
-            # Use my private RSA key to decrypt the DES key
-            ct = e["body"].strip(KEY_RESPONSE_MARKER)
-            my_pvt = keys.get_private_rsa_key(MAIL.account.Name)
-            pt = ct  # TODO: decrypt this RSA.decrypt(ct, my_pvt)
-            k = convert.encode(pt)
+                p, q, d = keys.get_private_rsa_key(MAIL.account.Name)
+                rsa = RSA(3,7)
+                rsa.p = int(p)
+                rsa.q = int(q)
+                rsa.d = int(d)
+                print("decrypting")
+                pkeys = [
+                    bin(rsa.decrypt(int(ck)))[2:] for ck in ckeys
+                ]
+                pkeys = ['0'*(64-len(k)) + k for k in pkeys]
+                # Save it
+                keys.save_3des_key(e["sender"]['email'], *pkeys)
 
-            # Save it
-            keys.save_3des_key(e["sender"], *k)
-
-            e["body"] = "SECURE LOC ESTABLISHED"
-            res.append(e)
+                e["body"] = "SECURE LOC ESTABLISHED"
+                res.append(e)
 
     return res[page * 20 : (page + 1) * 20]
 
@@ -154,10 +162,12 @@ def send(from_account, email):
 def request_key(from_account, user):
     MAIL = Outlook()
     MAIL.select_account(int(from_account))
+    pub = " ".join(keys.get_public_rsa_key(MAIL.account.Name))
+    body = f"{KEY_REQUEST_MARKER}({pub})"
     MAIL.send(
         user,
         "DAS Request",
-        KEY_REQUEST_MARKER + keys.get_public_rsa_key(MAIL.account.Name),
+        body,
     )
     return "300"
 
