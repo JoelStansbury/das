@@ -65,7 +65,7 @@ class Outlook:
         while last["recieved"] > min_dt_str:
             yield last
             i += 1
-            last = email_to_dict(email_objs[N-i])
+            last = email_to_dict(email_objs[N-i]) 
         
         i = 0
         last = email_to_dict(email_objs[i])
@@ -112,21 +112,29 @@ class Outlook:
         )
         msg.Send()
 
-
-    def reply(self, email, subject, body):
-        self.send(
-            to=email["sender"],
-            subject=subject,
-            body=body,
-        )
-
-    def reply_all(self, email, subject, body):
-        self.send(
-            to=[email["sender"], email["cc"]],
-            subject=subject,
-            body=body,
-        )
-
+    def delete(self, id, folder_name):
+        min_dt = datetime.now() - timedelta(days=3)
+        min_dt_str = min_dt.strftime(DATETIME_FORMAT)
+        email_objs = self.folders[folder_name].Items
+        N = len(email_objs)
+        if N==0: return []
+        i=1
+        last = email_to_dict(email_objs[N-i])
+        while last["recieved"] > min_dt_str:
+            if last["id"] == id:
+                email_objs[N-i].delete()
+                return
+            i += 1
+            last = email_to_dict(email_objs[N-i]) 
+        
+        i = 0
+        last = email_to_dict(email_objs[i])
+        while last["recieved"] > min_dt_str:
+            if last["id"] == id:
+                email_objs[N-i].delete()
+                return
+            i += 1
+            last = email_to_dict(email_objs[i])
 
 if __name__ == "__main__":
     ol = Outlook()

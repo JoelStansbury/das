@@ -31,6 +31,9 @@ def get_public_rsa_key(my_email_address):
         for rows in current_keys:
             if rows['User'] == my_email_address:
                 return rows['RSA Public Key']
+    generate_rsa_key(my_email_address)
+    return get_public_rsa_key(my_email_address)
+
 
 
 def get_3des_key(other_user):
@@ -65,6 +68,7 @@ def generate_des_key(other_user):
             else:
                 s[i] += "0"
     save_3des_key(other_user, s[0], s[1], s[2])
+    return s
 
 
 def save_keys(rsa_pubkey, rsa_prikey, des_key_1, des_key_2, des_key_3, sender_name):
