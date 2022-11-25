@@ -11,6 +11,10 @@ Cross platform desktop application for encrypting and digitally signing files
 ## Running the App
 `python -m das.app`
 
+OR
+
+`flask --app das/app.py --debug run`
+
 > on unix this is you'll need `python3 -m das.app`
 
 and navigate to http://localhost:5000 to see the website
