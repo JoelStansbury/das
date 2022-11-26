@@ -13,7 +13,7 @@ Cross platform desktop application for encrypting and digitally signing files
   - There is no external communication except what is required between MS Outlook and the javascript application
 
 
-> __DISCLAIMER:__ Keys shared between users are stored in an unencrypted file `das/key_manager/keys.csv`. If an encrypted conversation is to be rendered _practically_ un-decryptable, it is required that both users deleted the line corresponding to the other user in their `keys.csv`.
+> __DISCLAIMER:__ Keys shared between users are stored in an unencrypted file `das/key_manager/keys.csv`. If an encrypted conversation is to be rendered _practically_ un-decryptable, it is required that both users deleted the line corresponding to the other user in their `keys.csv`. It is also not read-write protected, so this is something that must be fixed before the tool is to be used in a critical setting.
 
 
 - [flask](https://pypi.org/project/Flask/) _application host_
