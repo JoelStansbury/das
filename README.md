@@ -12,20 +12,10 @@ Microsoft Outlook <br>
 [flask-cors](https://pypi.org/project/Flask-Cors/) <br>
 [sympy](https://pypi.org/project/sympy/) _large prime number generation_ <br>
 
-These can be obtained via pypi or conda
-#### Pip
-```bash
-pip install flask flask-cors sympy
-pip install -e .
-python -m das.app
-```
-and navigate to http://localhost:5000 to see the website
+These are installed with `pip install -e .` from the root of the repo.
 
-#### Conda
+## Usage
 ```bash
-conda env create -f environment.yml -p ./.venv
-conda activate ./.venv
-pip install -e .
 python -m das.app
 ```
 and navigate to http://localhost:5000 to see the website
