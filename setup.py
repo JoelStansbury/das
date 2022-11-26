@@ -10,6 +10,7 @@ requirements = [
     "nodejs",
     "flask",
     "flask-cors",
+    "sympy",
     "pypiwin32",
     "pywin32",
     "pytest",
