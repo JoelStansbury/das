@@ -1,7 +1,7 @@
 # das (Deem, Aryee, Stansbury)
 _das ist gut_
 
-Desktop application for encrypting and digitally signing files
+Desktop application for decentralized secure email communication
 ## Requirements
 - Windows 10
 - Microsoft Outlook
