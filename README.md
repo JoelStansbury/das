@@ -2,13 +2,13 @@
 _das ist gut_
 
 Desktop application for decentralized secure email communication
-## Requirements
-- Windows 10
-- Microsoft Outlook
-
-- [flask](https://pypi.org/project/Flask/) _application host_
-- [flask-cors](https://pypi.org/project/Flask-Cors/)
-- [sympy](https://pypi.org/project/sympy/) _large prime number generation_
+### System Requirements
+Windows 10 <br>
+Microsoft Outlook <br>
+### Python Requirements
+[flask](https://pypi.org/project/Flask/) _application host_ <br>
+[flask-cors](https://pypi.org/project/Flask-Cors/) <br>
+[sympy](https://pypi.org/project/sympy/) _large prime number generation_ <br>
 
 These can be obtained via pypi or conda
 #### Pip
