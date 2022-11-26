@@ -49,6 +49,6 @@ OR
 
 `flask --app das/app.py --debug run`
 
-> on unix this is you'll need `python3 -m das.app`
+> on unix this is `python3 -m das.app`
 
 and navigate to http://localhost:5000 to see the website
