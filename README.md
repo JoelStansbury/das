@@ -35,6 +35,8 @@ and navigate to http://localhost:5000 to see the website
 > __DISCLAIMER 2:__ This is still vulnerable to Man-in-the middle attacks carried out by either MS Outlook or the email service providers. Mitigating or eliminating this threat is a topic for future work.
 
 ## Running the App (debug mode)
+This allows automatic reloading of the application whenever a python script is edited.
+
 `flask --app das/app.py --debug run`
 
 and navigate to http://localhost:5000 to see the website
