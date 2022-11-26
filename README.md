@@ -11,7 +11,7 @@ Desktop application for decentralized secure email communication
   - Similarly we require the ability to send emails on behalf of the user (using MS Outlook as a proxy) [outlook.py#L81](https://github.com/JoelStansbury/das/blob/main/das/outlook/outlook.py#L81). This is also an unavoidable requirement.
   - We do not, however store any email data to any local files. The unencrypted text exists in memory for the duration of the session until the application is stopped.
   - There is no internal communication except what is required between MS Outlook and the javascript application
-  - There is no external communication except what performed by MS Outlook for sending emails, and javascript for obtaining dependencies [index.html#L5](https://github.com/JoelStansbury/das/blob/main/das/templates/index.html#L5)
+  - There is no external communication except what performed by MS Outlook for sending emails [outlook.py#L81](https://github.com/JoelStansbury/das/blob/main/das/outlook/outlook.py#L81), and javascript for obtaining dependencies [index.html#L5](https://github.com/JoelStansbury/das/blob/main/das/templates/index.html#L5)
 
 
 > __DISCLAIMER 1:__ Keys shared between users are stored in an unencrypted file `das/key_manager/keys.csv`. If an encrypted conversation is to be rendered _practically_ un-decryptable, it is required that both users delete the line corresponding to the other user in their `keys.csv`. It is also not read-write protected, so this is something that must be fixed before the tool is to be used in a critical setting.
