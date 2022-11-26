@@ -9,7 +9,6 @@ Windows 10 <br>
 Microsoft Outlook <br>
 ### Python Requirements
 [flask](https://pypi.org/project/Flask/) _application host_ <br>
-[flask-cors](https://pypi.org/project/Flask-Cors/) <br>
 [sympy](https://pypi.org/project/sympy/) _large prime number generation_ <br>
 
 These are installed with `pip install -e .` from the root of the repo.
