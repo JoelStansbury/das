@@ -4,3 +4,9 @@ channels:
   - defaults
 dependencies:
   - python
+  - flask
+  - flask-cors
+  - pip
+  - pip:
+    - pypiwin32
+    - sympy

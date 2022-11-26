@@ -35,6 +35,7 @@ function get_accounts() {
   xmlHttp.open("GET", `/api/getaccounts`, false); // false for synchronous request
   xmlHttp.send(null);
   resp = JSON.parse(xmlHttp.responseText);
+  console.log(resp);
   return resp;
 }
 

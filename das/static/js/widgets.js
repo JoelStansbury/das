@@ -87,7 +87,7 @@ function populate_accounts_dropdown() {
     account_selector.innerHTML = ""
     ACCOUNTS.forEach(acc => {
         account_selector.innerHTML += `
-            <option value=${acc[1]}>${acc[0]}</option>
+            <option value=${acc}>${acc}</option>
         `
     });
 }

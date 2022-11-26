@@ -12,3 +12,21 @@ def test_rsa():
     ), "Does not match example (p=79, q=89, ciphertext=4119). NOT {r.encrypt(44)}"
     assert r.d * r.k % r.phi_n == 1, "d and k are not inverses!"
     assert r.decrypt(r.encrypt(100)) == 100, r.decrypt(r.encrypt(100))
+
+
+def test_2_users():
+    generator = RSA()
+    _d = generator.__dict__
+
+    
+    rsa2 = RSA(3,7)
+    rsa2.n = _d["n"]
+    rsa2.d = _d["d"]
+
+    rsa3 = RSA(3,7)
+    rsa3.n = _d["n"]
+    rsa3.k = _d["k"]
+
+    pt = 2**63
+    ct = rsa3.encrypt(pt)
+    assert rsa2.decrypt(ct) == pt

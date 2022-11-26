@@ -3,7 +3,7 @@ from random import randint
 class Algorithms:
     def prime_sieve(n):
         A = [1 for i in range(n)]
-        for i in range(2, int(n**0.5)):
+        for i in range(2, int(n**0.5)+1):
             if A[i]:
                 yield i
                 for j in range(i**2, n, i):
@@ -53,6 +53,32 @@ class Algorithms:
 class mod:
     def __init__(self, n):
         self.n = n
+    
+    def exp(self, a, e):
+        """
+        Compute a^p mod(n)
+        Usage
+        -----
+        >>>> mod(n=5).exp(a=3, e=5)
+        """
+        r = 1
+        # Convert the exponent (e) into binary
+        # bin(__number: int) is a builtin python function which returns
+        # the binary repr of its argument.
+        bits = bin(e).strip("0b")
+        # For each bit in the binary string
+        for bit in bits:
+        # If bit is a "1", square and multiply
+            if bit == "1":
+                r = (r**2) * a
+            # If bit is a "0", square
+            else:
+                r = r**2
+            # Apply the mod after each operation. This could also be
+            # done after the loop, but keeping r as small as possible
+            # makes the operations faster.
+            r = r % self.n
+        return r
 
     def congruent(self, a, b):
         return a%self.n == b%self.n
