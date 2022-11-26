@@ -15,6 +15,8 @@ Cross platform desktop application for encrypting and digitally signing files
   - There is no external communication except what is required between MS Outlook and the javascript application
 - Windows 10
 
+> DISCLAIMER: Keys shared between users are stored in an unencrypted file `das/key_manager/keys.csv`. If an encrypted conversation is to be rendered _practically_ un-encryptable, it is required that both users deleted the line corresponding to the other user in their `keys.csv`.
+
 These can be obtained via pypi or conda
 #### Pip
 ```bash
