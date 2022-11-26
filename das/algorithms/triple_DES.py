@@ -593,23 +593,34 @@ def triple_des_decrypt(ct, key1, key2, key3):
     pt = decrypt(pt, key1)
     return pt
 
-
+from das.algorithms.convert import encode, decode
 def main():
-    pt = hex2bin("0000001000000400")
+    pt = encode('hello')
+    print("Binary Plain Text")
+    print(pt)
     key1 = hex2bin("A00000200F000000")
     key2 = hex2bin("A00000100F000000")
     key3 = hex2bin("A00000000B000000")
-    print(
-        bin2hex(
-            triple_des_decrypt(
-                triple_des_encrypt(pt, key1, key2, key3),
-                key1,
-                key2,
-                key3,
-            )
-        )
-    )
 
+    ct = [triple_des_encrypt(b, key1, key2, key3) for b in pt]
+    print("Binary Cipher Text")
+    print(ct)
+
+    text_to_send = decode(ct)
+    print("String Cipher Text")
+    print(text_to_send)
+
+    ct_bin = encode(text_to_send)
+    print("Binary Cipher Text (decoded from String CT")
+    print(ct_bin)
+
+    pt_bin = [triple_des_decrypt(b, key1, key2, key3) for b in ct_bin]
+    print("Binary Plain Text (decrypted)")
+    print(pt_bin)
+
+    pt = decode(pt_bin)
+    print("String Plain Text (decrypted)")
+    print(pt)
 
 if __name__ == "__main__":
     main()
