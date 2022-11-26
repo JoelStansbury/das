@@ -1,7 +1,7 @@
 # das (Deem, Aryee, Stansbury)
 _das ist gut_
 
-Cross platform desktop application for encrypting and digitally signing files
+Desktop application for encrypting and digitally signing files
 ## Requirements
 - Windows 10
 - Microsoft Outlook
