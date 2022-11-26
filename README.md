@@ -9,7 +9,7 @@ Desktop application for decentralized secure email communication
   - We believe that the best form of data stewardship is not requesting the data in the first place. While we could eliminate the dependence on 3rd party email clients by sacrificing this principle, we understand that this code does not have the same level of trust as MS Outlook and do not wish to compel users to relinquish that trust to us (or to dig through the code in order to verify our proper handling). This may change in the future once that trust has been established.
   - We do however require the ability to read emails. The code currently reads the past 2 days worth of emails [outlook.py#L42](https://github.com/JoelStansbury/das/blob/main/das/outlook/outlook.py#L42). This is unavoidable
   - Similarly we require the ability to send emails on behalf of the user (using MS Outlook as a proxy) [outlook.py#L81](https://github.com/JoelStansbury/das/blob/main/das/outlook/outlook.py#L81). This is also an unavoidable requirement.
-  - We do not, however store any email data to any local files. The unencrypted text exists in memory for the duration of the session untill the application is stopped.
+  - We do not, however store any email data to any local files. The unencrypted text exists in memory for the duration of the session until the application is stopped.
   - There is no external communication except what is required between MS Outlook and the javascript application
 
 
