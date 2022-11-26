@@ -9,8 +9,8 @@ Windows 10 <br>
 Microsoft Outlook <br>
 ### Python Requirements
 [flask](https://pypi.org/project/Flask/) _application host_ <br>
-[flask-cors](https://pypi.org/project/Flask-Cors/) <br>
 [sympy](https://pypi.org/project/sympy/) _large prime number generation_ <br>
+[pypiwin32](https://pypi.org/project/pypiwin32/) _OS level communication between python and MS Outlook_
 
 These are installed with `pip install -e .` from the root of the repo.
 
@@ -35,6 +35,8 @@ and navigate to http://localhost:5000 to see the website
 > __DISCLAIMER 2:__ This is still vulnerable to Man-in-the middle attacks carried out by either MS Outlook or the email service providers. Mitigating or eliminating this threat is a topic for future work.
 
 ## Running the App (debug mode)
+This allows automatic reloading of the application whenever a python script is edited.
+
 `flask --app das/app.py --debug run`
 
 and navigate to http://localhost:5000 to see the website
