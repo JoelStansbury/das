@@ -5,7 +5,6 @@ channels:
 dependencies:
   - python
   - flask
-  - flask-cors
   - pip
   - pip:
     - pypiwin32

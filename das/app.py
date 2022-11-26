@@ -3,7 +3,6 @@ from typing import List
 import json
 
 from flask import Flask, render_template, request
-from flask_cors import CORS
 
 from .outlook import Outlook
 from .algorithms.triple_DES import triple_des_decrypt, triple_des_encrypt
@@ -22,7 +21,6 @@ DES_KEY_MARKER = "DAS DES KEY"
 END_OF_TRANSMISSION = "END OF TRANSMISSION"
 
 app = Flask(__name__)
-CORS(app)
 
 ############### PAGES ###############
 @app.route("/")

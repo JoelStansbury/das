@@ -7,14 +7,11 @@ HERE = Path(__file__).parent
 long_description = (HERE / "README.md").read_text()
 
 requirements = [
-    "nodejs",
     "flask",
-    "flask-cors",
     "sympy",
     "pypiwin32",
-    "pywin32",
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
 ]
 
 setup(
